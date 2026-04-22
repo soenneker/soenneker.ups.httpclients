@@ -1,20 +1,19 @@
 using Soenneker.Ups.HttpClients.Abstract;
-using Soenneker.Tests.FixturedUnit;
-using Xunit;
+using Soenneker.Tests.HostedUnit;
 
 namespace Soenneker.Ups.HttpClients.Tests;
 
-[Collection("Collection")]
-public sealed class UpsOpenApiHttpClientTests : FixturedUnitTest
+[ClassDataSource<Host>(Shared = SharedType.PerTestSession)]
+public sealed class UpsOpenApiHttpClientTests : HostedUnitTest
 {
     private readonly IUpsOpenApiHttpClient _httpclient;
 
-    public UpsOpenApiHttpClientTests(Fixture fixture, ITestOutputHelper output) : base(fixture, output)
+    public UpsOpenApiHttpClientTests(Host host) : base(host)
     {
         _httpclient = Resolve<IUpsOpenApiHttpClient>(true);
     }
 
-    [Fact]
+    [Test]
     public void Default()
     {
 
