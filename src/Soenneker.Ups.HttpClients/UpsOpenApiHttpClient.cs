@@ -11,11 +11,11 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 
 namespace Soenneker.Ups.HttpClients;
 
-///<inheritdoc cref="IUpsOpenApiHttpClient"/>
 public sealed class UpsOpenApiHttpClient : IUpsOpenApiHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
     private readonly IConfiguration _config;
+    private readonly string _cacheKey = $"{nameof(UpsOpenApiHttpClient)}:{Guid.NewGuid():N}";
 
     private const string _prodBaseUrl = "https://onlinetools.ups.com/api";
 
@@ -27,12 +27,12 @@ public sealed class UpsOpenApiHttpClient : IUpsOpenApiHttpClient
 
     public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        return _httpClientCache.Get(nameof(UpsOpenApiHttpClient), (config: _config, baseUrl: _config["Ups:ClientBaseUrl"] ?? _prodBaseUrl), static state =>
+        return _httpClientCache.Get(_cacheKey, (config: _config, baseUrl: _config["Ups:ClientBaseUrl"] ?? _prodBaseUrl), static state =>
         {
-            var apiKey = state.config.GetValueStrict<string>("Ups:ApiKey");
+            string accessToken = state.config["Ups:AccessToken"] ?? state.config.GetValueStrict<string>("Ups:ApiKey");
             string authHeaderName = state.config["Ups:AuthHeaderName"] ?? "Authorization";
             string authHeaderValueTemplate = state.config["Ups:AuthHeaderValueTemplate"] ?? "Bearer {token}";
-            string authHeaderValue = authHeaderValueTemplate.Replace("{token}", apiKey, StringComparison.Ordinal);
+            string authHeaderValue = authHeaderValueTemplate.Replace("{token}", accessToken, StringComparison.Ordinal);
 
             return new HttpClientOptions
             {
@@ -45,20 +45,13 @@ public sealed class UpsOpenApiHttpClient : IUpsOpenApiHttpClient
         }, cancellationToken);
     }
 
-    /// <summary>
-    /// Releases resources used by the current instance.
-    /// </summary>
     public void Dispose()
     {
-        _httpClientCache.RemoveSync(nameof(UpsOpenApiHttpClient));
+        _httpClientCache.RemoveSync(_cacheKey);
     }
 
-    /// <summary>
-    /// Asynchronously releases resources used by the current instance.
-    /// </summary>
-    /// <returns>A task that represents the asynchronous operation.</returns>
     public ValueTask DisposeAsync()
     {
-        return _httpClientCache.Remove(nameof(UpsOpenApiHttpClient));
+        return _httpClientCache.Remove(_cacheKey);
     }
 }

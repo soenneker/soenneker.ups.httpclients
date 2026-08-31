@@ -6,7 +6,7 @@ using Soenneker.Utils.HttpClientCache.Registrar;
 namespace Soenneker.Ups.HttpClients.Registrars;
 
 /// <summary>
-/// Registers the OpenAPI HttpClient wrapper for dependency injection.
+/// Registers HTTP clients authenticated for UPS APIs.
 /// </summary>
 public static class UpsOpenApiHttpClientRegistrar
 {

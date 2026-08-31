@@ -6,14 +6,14 @@ using System.Threading;
 namespace Soenneker.Ups.HttpClients.Abstract;
 
 /// <summary>
-/// A .NET thread-safe singleton HttpClient for 
+/// Provides an HTTP client authenticated with a UPS OAuth access token.
 /// </summary>
-public interface IUpsOpenApiHttpClient: IDisposable, IAsyncDisposable
+public interface IUpsOpenApiHttpClient : IDisposable, IAsyncDisposable
 {
     /// <summary>
-    /// Gets the value.
+    /// Gets the cached HTTP client, creating it on first use.
     /// </summary>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A task containing the result of the operation.</returns>
+    /// <param name="cancellationToken">The token used to cancel client creation.</param>
+    /// <returns>The authenticated HTTP client.</returns>
     ValueTask<HttpClient> Get(CancellationToken cancellationToken = default);
 }
