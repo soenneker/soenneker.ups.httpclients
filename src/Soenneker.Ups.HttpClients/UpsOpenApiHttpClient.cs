@@ -11,6 +11,7 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 
 namespace Soenneker.Ups.HttpClients;
 
+/// <inheritdoc cref="IUpsOpenApiHttpClient" />
 public sealed class UpsOpenApiHttpClient : IUpsOpenApiHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
