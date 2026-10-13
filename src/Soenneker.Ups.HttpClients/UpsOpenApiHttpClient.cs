@@ -30,7 +30,7 @@ public sealed class UpsOpenApiHttpClient : IUpsOpenApiHttpClient
     {
         return _httpClientCache.Get(_cacheKey, (config: _config, baseUrl: _config["Ups:ClientBaseUrl"] ?? _prodBaseUrl), static state =>
         {
-            string accessToken = state.config["Ups:AccessToken"] ?? state.config.GetValueStrict<string>("Ups:ApiKey");
+            string accessToken = state.config["Ups:AccessToken"] ?? state.config.GetStringStrict("Ups:ApiKey");
             string authHeaderName = state.config["Ups:AuthHeaderName"] ?? "Authorization";
             string authHeaderValueTemplate = state.config["Ups:AuthHeaderValueTemplate"] ?? "Bearer {token}";
             string authHeaderValue = authHeaderValueTemplate.Replace("{token}", accessToken, StringComparison.Ordinal);
